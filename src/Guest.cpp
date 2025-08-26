@@ -78,7 +78,7 @@ bool Guest::isPasswordValid(const string& password) {
         return false; // Password contains spaces
     }
     for(char c : password) {
-        if (!isalnum(c) && c != '_' && c != '@' && c != '#' && c != '$' && c != '%') {
+        if (c < 0x21 || c >= 0x7F) {
             return false; // Password contains invalid characters
         }
         if(isupper(c)) {
