@@ -73,11 +73,10 @@ bool Guest::isPasswordValid(const string& password) {
             return false; // Password contains invalid characters
         }
         if(isupper(c)) {
-            return true; // Password contains at least one uppercase letter
+            if(isdigit(c) && islower(c)){
+                return true; // Password contains at least one uppercase,lowercase and digit
+            }
         }
-        if(islower(c)) {
-            return true; // Password contains at least one lowercase letter
-        }
-    }
+        
     return true; // Password is valid
 }
