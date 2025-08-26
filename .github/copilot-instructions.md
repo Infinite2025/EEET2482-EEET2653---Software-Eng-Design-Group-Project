@@ -40,7 +40,7 @@ No GUI — only **console I/O (cin, cout)**.
 - Use `enum` for role types and rental statuses.  
 
 ## Output
-- Always print clear text menus and confirmations in Vietnamese.  
+- Always print clear text menus and confirmations in English.  
 - Example:
   - "Welcome to our motorbike rent system!"
   - "1. Log in"
