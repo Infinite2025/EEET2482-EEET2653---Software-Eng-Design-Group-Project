@@ -61,6 +61,14 @@ void Guest::signup() {
 
 }
 
+void Guest::viewListing() {
+    cout << "Viewing available motorbikes for rent..." << endl;
+    // Implementation for viewing available motorbikes
+    // This could involve reading from a file or database and displaying the listings
+}
+
+
+
 // Validates if the password meets the minimum length requirement
 bool Guest::isPasswordValid(const string& password) {
     if (password.length() < 8) {

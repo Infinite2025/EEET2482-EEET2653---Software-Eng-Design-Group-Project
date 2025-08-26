@@ -64,9 +64,26 @@ void guestMode(){
         cout << "2. View Available Motorbikes for Rent" << endl;
         cout << "3. Return to Main Menu" << endl;
         cout << "Enter your choice (1-3): ";
-        int choice;
-        cin >> choice;
+        int guestChoice = getChoice(1, 3);
+        switch(guestChoice){
+            case 1:
+                cout << "=== Guest Sign Up ===" << endl;
+                guest.signup();
+                pause();
+                break;
+            case 2:
+                cout << "=== View Motorbike Listings ===" << endl;
+                guest.viewListing();
+                pause();
+                break;
+            case 3:
+                exitGuestMenu = true;
+                break;
+        }
+        
+
     }
+
 }
 int main(){
     
