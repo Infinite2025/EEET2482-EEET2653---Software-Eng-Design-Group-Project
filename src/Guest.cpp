@@ -33,6 +33,8 @@ void Guest::signup() {
     cout << "Signing up for a new member account..." << endl;
     // Implementation for signing up a new member account
     // This involves collecting user details and storing them
+
+    // Username and Password validation
     string input;
     do{
         cout << "Enter username: ";
@@ -47,24 +49,33 @@ void Guest::signup() {
         }
 
     }while(username.empty());
+
     do{
         cout << "Enter password: ";
-        getline(cin, input);
-        if(input.empty()){
-            cout << "Password cannot be empty. Please try again." << endl;
-        } else if (!isPasswordValid(input)){
-            cout << "Password must be at least 8 characters long. Please try again." << endl;
-        } else {
-            password = input;
-        }
-    }while(password.empty());
+        getline(cin, password);
+    }while(!isPasswordValid(password));
+
+    // Full Name
+    do{
+        cout << "Enter full name: ";
+        getline(cin, fullName);
+        
+    }while(fullName.empty());
+
 
 }
 
 void Guest::viewListing() {
     cout << "Viewing available motorbikes for rent..." << endl;
     // Implementation for viewing available motorbikes
-    // This could involve reading from a file or database and displaying the listings
+    
+    ifstream file("EBike.csv");
+    if(!file.is_open()) {
+        cout << "Error opening motorbike listings file." << endl;
+        return;
+    }
+
+
 }
 
 
