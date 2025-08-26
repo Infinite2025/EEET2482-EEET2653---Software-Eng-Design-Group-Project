@@ -1,10 +1,52 @@
 #include<iostream>
 #include<string>
 #include<iomanip>
+#include<fstream>
+#include<sstream>
 #include "Guest.h"
 using namespace std;
 
+// Default constructor for Guest class
 Guest::Guest() {
     int creditPoints = 10; // Initialize credit points for guest
     int rating = -1; // Initialize rating for guest
+}
+
+// Check available usernames
+bool isUsernameAvailable(const string& username) {
+    // This function checks a list of existing usernames Member.txt
+    ifstream file("Member.txt");
+    string line;
+    getline(file, line); // Skip header line
+    while(getline(file, line)) {
+        stringstream ss(line);
+        string existingUsername;
+        getline(ss, existingUsername, ','); // Assuming username is the first field
+            if(existingUsername == username) {
+                return false; // Username already exists
+            }
+    }
+    return true;// Username is available
+}
+void Guest::signup() {
+    cout << "Signing up for a new member account..." << endl;
+    // Implementation for signing up a new member account
+    // This involves collecting user details and storing them
+    string input;
+    do{
+        cout << "Enter username: ";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        getline(cin, input);
+        if(input.empty()){
+            cout << "Username cannot be empty. Please try again." << endl;
+        } else if (!isUsernameAvailable(input)){
+            cout << "Username already taken. Please choose another." << endl;
+        } else {
+            username = input;
+        }
+
+
+    }while(username.empty());
+
+
 }
