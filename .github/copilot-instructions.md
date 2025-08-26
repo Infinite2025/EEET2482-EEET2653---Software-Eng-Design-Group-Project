@@ -25,7 +25,7 @@ No GUI — only **console I/O (cin, cout)**.
 
 ## Design Guidelines
 - Use **class-based OOP design**:
-  - `User` (base), subclasses `Guest`, `Member`, `Admin`.  
+  - only 3 class: `Guest`, `Member`, `Admin`.  
   - `Bike` class with attributes (brand, model, year, cc, licensePlate, rating, etc).  
   - `Rental` class for transactions.  
   - `CreditAccount` class for CP management.  
