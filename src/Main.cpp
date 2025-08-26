@@ -69,22 +69,54 @@ void guestMode(){
             case 1:
                 cout << "=== Guest Sign Up ===" << endl;
                 guest.signup();
-                pause();
                 break;
             case 2:
                 cout << "=== View Motorbike Listings ===" << endl;
                 guest.viewListing();
-                pause();
                 break;
             case 3:
                 exitGuestMenu = true;
                 break;
         }
-        
+        pause();
+        if(!exitGuestMenu){
+            pause();
+            cin.get(); // Wait for user to press Enter
+
+        }
 
     }
-
 }
+void memberMode(){
+    // Placeholder for member mode functionality
+    // Member member;
+    // Implement member functionalities here
+}
+void adminMode(){
+    // Placeholder for admin mode functionality
+    // Admin admin;
+    // Implement admin functionalities here
+}
+
 int main(){
-    
+    displayWelcomeMenu();
+    int choice = getChoice(1, 4);
+    switch(choice){
+        case 1:
+            guestMode();
+            break;
+        case 2:
+            // memberMode(); // Implement memberMode function
+            cout << "Member mode is under construction." << endl;
+            pause();
+            break;
+        case 3:
+            // adminMode(); // Implement adminMode function
+            cout << "Admin mode is under construction." << endl;
+            pause();
+            break;
+        case 4:
+            cout << "Exiting the application. Goodbye!" << endl;
+            break;
+    }
 }
