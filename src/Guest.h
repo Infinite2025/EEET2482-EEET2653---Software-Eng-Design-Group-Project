@@ -22,6 +22,11 @@ private:
     int creditPoints;
     int rating;
 
+
+
+    // Validating variables during sign up
+    bool isUsernameAvailable(const std::string& username);
+    bool isPasswordValid(const std::string& password);
 };
 
 

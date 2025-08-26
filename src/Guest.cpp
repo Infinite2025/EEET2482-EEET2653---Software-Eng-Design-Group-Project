@@ -45,8 +45,22 @@ void Guest::signup() {
             username = input;
         }
 
-
     }while(username.empty());
+    do{
+        cout << "Enter password: ";
+        getline(cin, input);
+        if(input.empty()){
+            cout << "Password cannot be empty. Please try again." << endl;
+        } else if (!isPasswordValid(input)){
+            cout << "Password must be at least 8 characters long. Please try again." << endl;
+        } else {
+            password = input;
+        }
+    }while(password.empty());
 
+}
 
+// Validates if the password meets the minimum length requirement
+bool Guest::isPasswordValid(const string& password) {
+    return password.length() >= 8;
 }
