@@ -54,7 +54,19 @@ void pause(){
 // Activate Guest mode
 void guestMode(){
     Guest guest;
-    
+    bool exitGuestMenu = false;
+    while(!exitGuestMenu){
+        clearScreen();
+        cout << "==============================================="   << endl;
+        cout << " Guest Menu " << endl; 
+        cout << "==============================================="   << endl;
+        cout << "1. Sign Up for a New Member Account" << endl;
+        cout << "2. View Available Motorbikes for Rent" << endl;
+        cout << "3. Return to Main Menu" << endl;
+        cout << "Enter your choice (1-3): ";
+        int choice;
+        cin >> choice;
+    }
 }
 int main(){
     

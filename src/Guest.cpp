@@ -28,6 +28,7 @@ bool isUsernameAvailable(const string& username) {
     }
     return true;// Username is available
 }
+
 void Guest::signup() {
     cout << "Signing up for a new member account..." << endl;
     // Implementation for signing up a new member account
@@ -79,4 +80,5 @@ bool Guest::isPasswordValid(const string& password) {
         }
         
     return true; // Password is valid
+    }
 }
