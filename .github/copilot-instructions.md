@@ -11,7 +11,7 @@ No GUI — only **console I/O (cin, cout)**.
 - **Admin**: view/manage all members, all bikes, transactions.  
 
 ## Rules
-- CP = credit points (1 USD = 1 CP).  
+- CP = credit points (1 USD = 1 CP). 
 - Registration fee = 20 USD → 20 CP.  
 - Each member: 1 bike registered max, 1 active rental max.  
 - Rental request conditions:
@@ -30,7 +30,7 @@ No GUI — only **console I/O (cin, cout)**.
   - `Rental` class for transactions.  
   - `CreditAccount` class for CP management.  
 - Store data in memory (vectors, maps).  
-- No database, no GUI, no external frameworks.  
+- No database, no GUI, no external frameworks.
 
 ## Coding Style
 - Use **English identifiers**.  
