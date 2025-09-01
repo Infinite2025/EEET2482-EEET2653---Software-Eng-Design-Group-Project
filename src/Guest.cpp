@@ -12,7 +12,8 @@ Guest::Guest() {
     int rating = -1; // Initialize rating for guest
 }
 
-// Check available usernames
+
+// Check availablility during sign up
 bool isUsernameAvailable(const string& username) {
     // This function checks a list of existing usernames Member.txt
     ifstream file("Member.csv");
@@ -46,6 +47,33 @@ bool isEmailAvailable(const string& email) {
     }
     return true; // Email is available
 }
+
+// Validates if the password meets the minimum length requirement
+bool Guest::isPasswordValid(const string& password) {
+    if (password.length() < 8) {
+        return false; // Password too short
+    }
+    if(password.find(' ') != string::npos) {
+        return false; // Password contains spaces
+    }
+    for(char c : password) {
+        if (c < 0x21 || c >= 0x7F) {
+            return false; // Password contains invalid characters
+        }
+        if(isupper(c)) {
+            if(isdigit(c) && islower(c)){
+                return true; // Password contains at least one uppercase,lowercase and digit
+            }
+        }
+        
+    return true; // Password is valid
+    }
+}
+
+
+
+// Main Functions for Guest class
+
 
 void Guest::signup() {
     cout << "Signing up for a new member account..." << endl;
@@ -135,6 +163,30 @@ void Guest::signup() {
         }
     }while(phoneNumber.empty());
 
+    // ID Type and Number
+    do{
+        cout << "Enter ID type (e.g., Passport, Driver's License): ";
+        getline(cin, idType);
+        if(idType != "Passport" && idType != "Driver's License" && idType != "National ID") {
+            cout << "Invalid ID type. Please enter 'Passport', 'Driver's License', or 'National ID'." << endl;
+            idType.clear();
+            continue;
+        }
+        else{
+            idType = idType;
+        }
+    }while(idType.empty());
+    
+    do{
+        cout << "Enter ID number: ";
+        getline(cin, idNumber);
+        if (!isIDNumberAvailable(idNumber)){
+            cout << "ID number already registered. Please use another." << endl;
+        } else {
+            idNumber = idNumber;
+        }
+    }while(idNumber.empty());
+
 }
 
 void Guest::viewListing() {
@@ -152,24 +204,3 @@ void Guest::viewListing() {
 
 
 
-// Validates if the password meets the minimum length requirement
-bool Guest::isPasswordValid(const string& password) {
-    if (password.length() < 8) {
-        return false; // Password too short
-    }
-    if(password.find(' ') != string::npos) {
-        return false; // Password contains spaces
-    }
-    for(char c : password) {
-        if (c < 0x21 || c >= 0x7F) {
-            return false; // Password contains invalid characters
-        }
-        if(isupper(c)) {
-            if(isdigit(c) && islower(c)){
-                return true; // Password contains at least one uppercase,lowercase and digit
-            }
-        }
-        
-    return true; // Password is valid
-    }
-}
