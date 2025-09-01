@@ -15,7 +15,7 @@ Guest::Guest() {
 // Check available usernames
 bool isUsernameAvailable(const string& username) {
     // This function checks a list of existing usernames Member.txt
-    ifstream file("Member.txt");
+    ifstream file("Member.csv");
     string line;
     getline(file, line); // Skip header line
     while(getline(file, line)) {
@@ -27,6 +27,24 @@ bool isUsernameAvailable(const string& username) {
             }
     }
     return true;// Username is available
+}
+
+bool isEmailAvailable(const string& email) {
+    // This function checks a list of existing emails in Member.txt
+    ifstream file("Member.csv");
+    string line;
+    getline(file, line); // Skip header line
+    while(getline(file, line)) {
+        stringstream ss(line);
+        string existingEmail;
+        for(int i = 0; i < 4; i++) { // Assuming email is the 5th field
+            getline(ss, existingEmail, ',');
+        }
+        if(existingEmail == email) {
+            return false; // Email already exists
+        }
+    }
+    return true; // Email is available
 }
 
 void Guest::signup() {
@@ -62,6 +80,24 @@ void Guest::signup() {
         
     }while(fullName.empty());
 
+    // Email
+    do{
+        cout << "Enter email: ";
+        getline(cin, email);
+        if(email.find('@') == string::npos || email.find('.') == string::npos) {
+            cout << "Invalid email format. Please try again." << endl;
+            email.clear();
+        }
+        else if(!isEmailAvailable(email)){
+            cout << "Email already registered. Please use another or login to the Email Account." << endl;
+            email.clear();
+        }
+        else{
+            email = email;
+        }
+    }while(email.empty());
+
+    // Phone Number
 
 }
 

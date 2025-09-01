@@ -1,0 +1,2 @@
+username,password,fullName,email,phoneNumber,idType,idNumber,licenseNumber,licenseExpiryDate,creditPoints 
+user001,Pasw21*,Trinh Tuan Kiet,abc@gmail.com,0123456789,Passport,A12345678,B1234567,2025-12-31,100
