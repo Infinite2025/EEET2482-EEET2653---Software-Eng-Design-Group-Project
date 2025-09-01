@@ -11,9 +11,9 @@ Designed and developed as the group project for the EEET2482/EEET2653 Software E
 
 ## Group Members
 - Trinh Tuan Kiet - S4118006
-- Dao Binh Nguyen
-- Mai Quy Anh
-- Phan Duc Manh
+- Dao Binh Nguyen - S
+- Mai Quy Anh - S
+- Phan Duc Manh - S
 
 ## Technical Setup & Execution
 
