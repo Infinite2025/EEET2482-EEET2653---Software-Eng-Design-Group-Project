@@ -98,6 +98,42 @@ void Guest::signup() {
     }while(email.empty());
 
     // Phone Number
+    do{
+        cout << "Enter phone number: ";
+        getline(cin, phoneNumber);
+        if(phoneNumber.length() !=10) {
+            cout << "Invalid phone number. Please enter a valid number." << endl;
+            phoneNumber.clear();
+        }
+        else if(phoneNumber.length() ==10) {
+            for(char c : phoneNumber) {
+                if(!isdigit(c)) {
+                    cout << "Phone number should contain only digits. Please try again." << endl;
+                    phoneNumber.clear();
+                    break;
+                }
+                if(phoneNumber[0] != '0') {
+                    cout << "Phone number should start with 0. Please try again." << endl;
+                    phoneNumber.clear();
+                    break;
+                }
+                if(phoneNumber.find(' ') != string::npos) {
+                    cout << "Phone number should not contain spaces. Please try again." << endl;
+                    phoneNumber.clear();
+                    break;
+            }
+            
+        }
+    }
+        else if(!isPhoneNumberAvailable(phoneNumber)){
+            cout << "Phone number already registered. Please use another or login to the Phone Number Account." << endl;
+            phoneNumber.clear();
+        }
+        else{
+            phoneNumber = phoneNumber;
+        
+        }
+    }while(phoneNumber.empty());
 
 }
 
