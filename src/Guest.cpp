@@ -3,6 +3,7 @@
 #include<iomanip>
 #include<fstream>
 #include<sstream>
+#include<limits>
 #include "Guest.h"
 using namespace std;
 
