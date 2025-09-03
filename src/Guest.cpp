@@ -12,6 +12,11 @@ Guest::Guest() {
     int rating = -1; // Initialize rating for guest
 }
 
+// Pauses the program until the user presses Enter
+void pause(){
+    cout << "Press Enter to continue...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
 
 // Check availablility during sign up
 bool isUsernameAvailable(const string& username) {
@@ -186,6 +191,38 @@ void Guest::signup() {
             idNumber = idNumber;
         }
     }while(idNumber.empty());
+
+    // License Number and Expiry Date
+    cout << "Note: A valid driving license is required to rent a motorbike." << endl;
+    cout << "Do you have a valid driving license? (yes/no): ";
+    string hasLicense;
+    getline(cin, hasLicense);
+    if(hasLicense != "yes") {
+        cout << "You must have a valid driving license to sign up." << endl;
+        
+    }
+    else if(hasLicense == "yes"){
+        cout << "Proceeding with license details..." << endl;
+        
+        pause();
+        do{
+            cout << "Enter license number: ";
+            getline(cin, licenseNumber);
+            if(licenseNumber.length() != 12) {
+                cout << "Invalid license number. Please enter a valid license number." << endl;
+                licenseNumber.clear();
+            }
+            else if(!isLicenseNumberValid(licenseNumber)){
+                cout << "License number not valid. Please enter a valid license number." << endl;
+                licenseNumber.clear();
+            }
+            else{
+                licenseNumber = licenseNumber;
+            }
+        }while(licenseNumber.empty());
+    }
+
+    
 
 }
 

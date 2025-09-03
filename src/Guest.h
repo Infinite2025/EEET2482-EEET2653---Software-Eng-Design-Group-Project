@@ -31,7 +31,7 @@ private:
     bool isEmailAvailable(const std::string& email);
     bool isPhoneNumberAvailable(const std::string& phoneNumber);
     bool isIDNumberAvailable(const std::string& idNumber);
-    bool hasValidLicense(const std::string& licenseNumber);
+    bool isLicenseNumberValid(const std::string& licenseNumber);
 };
 
 
