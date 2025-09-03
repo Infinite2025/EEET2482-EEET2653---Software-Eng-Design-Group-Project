@@ -75,7 +75,22 @@ bool Guest::isPasswordValid(const string& password) {
     }
 }
 
-
+bool Guest::isLicenseNumberValid(const string& licenseNumber) {
+    if(licenseNumber.length() != 12) {
+        return false; // License number must be exactly 12 characters
+    }
+    else if(licenseNumber.find(' ') != string::npos) {
+        return false; // License number should not contain spaces
+    }
+    else{
+        for(char c : licenseNumber) {
+            if(!(isdigit(c))) {
+                return false; // License number should be numeric
+            }
+        }
+    }
+    return true; // License number is valid
+}
 
 // Main Functions for Guest class
 
@@ -203,7 +218,7 @@ void Guest::signup() {
     }
     else if(hasLicense == "yes"){
         cout << "Proceeding with license details..." << endl;
-        
+
         pause();
         do{
             cout << "Enter license number: ";
@@ -220,7 +235,12 @@ void Guest::signup() {
                 licenseNumber = licenseNumber;
             }
         }while(licenseNumber.empty());
+
+        cout << "Enter license expiry date (DD/MM/YYYY): ";
+        getline(cin, licenseExpiryDate);
     }
+
+    
 
     
 
