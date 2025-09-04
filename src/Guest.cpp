@@ -20,7 +20,7 @@ void pause(){
 }
 
 // Check availablility during sign up
-bool isUsernameAvailable(const string& username) {
+bool Guest::isUsernameAvailable(const string& username) {
     // This function checks a list of existing usernames Member.txt
     ifstream file("Member.csv");
     string line;
@@ -36,7 +36,7 @@ bool isUsernameAvailable(const string& username) {
     return true;// Username is available
 }
 
-bool isEmailAvailable(const string& email) {
+bool Guest::isEmailAvailable(const string& email) {
     // This function checks a list of existing emails in Member.txt
     ifstream file("Member.csv");
     string line;
@@ -209,13 +209,13 @@ void Guest::signup() {
     }while(idNumber.empty());
 
     // License Number and Expiry Date
-    cout << "Note: A valid driving license is required to rent a motorbike." << endl;
+    cout << "Note: A valid driving license is required to list a motorbike." << endl;
     cout << "Do you have a valid driving license? (yes/no): ";
     string hasLicense;
     getline(cin, hasLicense);
-    if(hasLicense != "yes") {
-        cout << "You must have a valid driving license to sign up." << endl;
-        
+    if(hasLicense == "no") {
+        cout << "You can only rent motorbikes with 50cc." << endl;
+
     }
     else if(hasLicense == "yes"){
         cout << "Proceeding with license details..." << endl;

@@ -1,3 +1,5 @@
+#define CREDITACCOUNT_H
+#ifndef CREDITACCOUNT_H
 #pragma once
 #include <string>
 
@@ -13,3 +15,6 @@ public:
     bool withdraw(int cp); // returns false if insufficient balance
     bool canAfford(int cp) const;
 };
+
+
+#endif // CREDITACCOUNT_H

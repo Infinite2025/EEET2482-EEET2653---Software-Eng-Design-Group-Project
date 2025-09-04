@@ -16,6 +16,7 @@ Designed and developed as the group project for the EEET2482/EEET2653 Software E
 - Phan Duc Manh - S
 
 ## Technical Setup & Execution
+Use "cd src" to change directory to src. 
 
 ### Prerequisites
 - G++ Complier
