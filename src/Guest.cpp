@@ -241,10 +241,24 @@ void Guest::signup() {
         getline(cin, licenseExpiryDate);
     }
 
-    
+    saveToFile();
+    cout << "Sign up successful! You can now log in with your new member account." << endl;
+    pause();
 
     
 
+}
+
+void Guest::saveToFile(){
+    std::ofstream file("Member.csv", std::ios::app);
+    if(file.is_open()){
+        cout << "Saving member details to file..." << endl;
+        file << username << "," << password << "," << fullName << "," << phoneNumber << "," << email << "," << idType << "," << idNumber << "," << licenseNumber << "," << licenseExpiryDate << "," << creditPoints << "," << rating << endl;
+        file.close();
+    }
+    else{
+        cout << "Error opening file for writing." << endl;
+    }
 }
 
 void Guest::viewListing() {

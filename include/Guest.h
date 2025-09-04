@@ -32,6 +32,7 @@ private:
     bool isPhoneNumberAvailable(const std::string& phoneNumber);
     bool isIDNumberAvailable(const std::string& idNumber);
     bool isLicenseNumberValid(const std::string& licenseNumber);
+    void saveToFile(); // Save new member details to Member.csv
 };
 
 
