@@ -9,7 +9,7 @@ enum class RentalStatus {
     Completed
 };
 
-class Rental {
+class Rental{
 private:
     std::string renterUsername;
     std::string ownerUsername;
