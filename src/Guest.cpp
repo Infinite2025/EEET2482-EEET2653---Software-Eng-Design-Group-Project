@@ -274,5 +274,13 @@ void Guest::viewListing() {
 
 }
 
+// Testing Ground
+int main() {
+    Guest guest;
+    guest.signup();
+    //guest.viewListing();
+    return 0;
+}
+
 
 
