@@ -4,7 +4,8 @@
 #include<fstream>
 #include<sstream>
 #include<limits>
-#include "Guest.h"
+#include<cctype>
+#include "../include/Guest.h"
 using namespace std;
 
 // Default constructor for Guest class
@@ -54,26 +55,77 @@ bool Guest::isEmailAvailable(const string& email) {
     return true; // Email is available
 }
 
+bool Guest::isPhoneNumberAvailable(const string& phoneNumber) {
+    // This function checks a list of existing phone numbers in Member.txt
+    ifstream file("Member.csv");
+    string line;
+    getline(file, line); // Skip header line
+    while(getline(file, line)) {
+        stringstream ss(line);
+        string existingPhoneNumber;
+        for(int i = 0; i < 3; i++) { // Assuming phone number is the 4th field
+            getline(ss, existingPhoneNumber, ',');
+        }
+        if(existingPhoneNumber == phoneNumber) {
+            return false; // Phone number already exists
+        }
+    }
+    return true; // Phone number is available
+}
+
+bool Guest::isIDNumberAvailable(const string& idNumber) {
+    // This function checks a list of existing ID numbers in Member.txt
+    ifstream file("Member.csv");
+    string line;
+    getline(file, line); // Skip header line
+    while(getline(file, line)) {
+        stringstream ss(line);
+        string existingIDNumber;
+        for(int i = 0; i < 6; i++) { // Assuming ID number is the 7th field
+            getline(ss, existingIDNumber, ',');
+        }
+        if(existingIDNumber == idNumber) {
+            return false; // ID number already exists
+        }
+    }
+    return true; // ID number is available
+}
+
 // Validates if the password meets the minimum length requirement
 bool Guest::isPasswordValid(const string& password) {
-    if (password.length() < 8) {
+    if(password.length() < 8) {
         return false; // Password too short
     }
     if(password.find(' ') != string::npos) {
         return false; // Password contains spaces
     }
+        int upper = 0;
+        int lower = 0;
+        int digit = 0;
     for(char c : password) {
-        if (c < 0x21 || c >= 0x7F) {
-            return false; // Password contains invalid characters
-        }
-        if(isupper(c)) {
-            if(isdigit(c) && islower(c)){
-                return true; // Password contains at least one uppercase,lowercase and digit
-            }
-        }
         
-    return true; // Password is valid
+        /*if (c < 0x21 || c >= 0x7F) {
+            return false; // Password contains invalid characters
+        }*/
+        
+        if(isupper(c)) {
+            upper++;
+        }
+        if(isdigit(c)){
+            digit++;
+        }
+        if(islower(c)){
+           lower++;      
+        }
     }
+        if(upper == 0 || lower == 0 || digit == 0) {
+            return false; // Password must contain at least one uppercase, one lowercase, and one digit
+        
+        // Password must contains at least one uppercase,lowercase and digit
+        
+    
+    }
+    return true; // Password is valid
 }
 
 bool Guest::isLicenseNumberValid(const string& licenseNumber) {
@@ -101,18 +153,17 @@ void Guest::signup() {
     // Implementation for signing up a new member account
     // This involves collecting user details and storing them
 
-    // Username and Password validation
-    string input;
+    // Username and Password validation  ** Username not saved
+    
     do{
         cout << "Enter username: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        getline(cin, input);
-        if(input.empty()){
-            cout << "Username cannot be empty. Please try again." << endl;
-        } else if (!isUsernameAvailable(input)){
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
+        getline(cin, username);
+        if (!isUsernameAvailable(username)){
             cout << "Username already taken. Please choose another." << endl;
+            username.clear();
         } else {
-            username = input;
+            username = username;
         }
 
     }while(username.empty());
@@ -120,7 +171,14 @@ void Guest::signup() {
     do{
         cout << "Enter password: ";
         getline(cin, password);
-    }while(!isPasswordValid(password));
+        if(!isPasswordValid(password)){
+            cout << "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and no spaces." << endl;
+            password.clear();
+        }
+        else{
+            password = password;
+        }
+    }while(password.empty());
 
     // Full Name
     do{
@@ -277,7 +335,7 @@ void Guest::viewListing() {
 // Testing Ground
 int main() {
     Guest guest;
-    guest.signup();
+    guest.signup(); // Username
     //guest.viewListing();
     return 0;
 }
