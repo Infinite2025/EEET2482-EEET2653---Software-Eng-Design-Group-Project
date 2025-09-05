@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Bike.h"
+#include "EBike.h"
 #include "CreditAccount.h"
 #include "Rental.h"
 
@@ -17,7 +17,7 @@ private:
     std::string licenseNumber;
     std::string licenseExpiry;
     int rating; // default 3
-    Bike* registeredBike;
+    EBike* registeredBike; // Each member can register one EBike
     CreditAccount account;
     std::vector<Rental> rentalHistory;
     bool isLoggedIn;
@@ -45,16 +45,16 @@ public:
     void changePassword(const std::string& oldPassword, const std::string& newPassword);
     void viewProfile() const;
     void loadCredit(int usd, const std::string& inputPassword);
-    bool registerBike(const Bike& bike);
+    bool registerBike(const EBike& bike);
     void viewRentalHistory() const;
-    bool requestRental(Bike& bike, int days);
-    void rateBike(Bike& bike, int stars, const std::string& comment);
+    bool requestRental(EBike& bike, const std::string& startDate, const std::string& endDate);
+    void rateBike(EBike& bike, int stars, const std::string& comment);
     void rateRenter(Member& renter, int stars, const std::string& comment);
     int getRating() const;
     CreditAccount& getAccount();
-    Bike* getBike();
+    EBike* getBike();
     bool hasActiveRental() const;
     bool hasValidLicense(int bikeCC) const;
     bool isBikeRegistered() const;
-    // Add more
+    // Add more functions
 };

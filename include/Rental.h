@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Bike.h"
+#include "EBike.h"
 
 enum class RentalStatus {
     Pending,
@@ -13,7 +13,7 @@ class Rental {
 private:
     std::string renterUsername;
     std::string ownerUsername;
-    Bike* bike;
+    EBike* bike;
     int days;
     RentalStatus status;
     std::string startDate;
@@ -23,7 +23,7 @@ private:
 public:
     Rental(const std::string& renterUsername,
            const std::string& ownerUsername,
-           Bike* bike,
+           EBike* bike,
            int days,
            const std::string& startDate,
            const std::string& endDate,
@@ -34,7 +34,7 @@ public:
     int getCost() const;
     std::string getRenterUsername() const;
     std::string getOwnerUsername() const;
-    Bike* getBike() const;
+    EBike* getBike() const;
     std::string getStartDate() const;
     std::string getEndDate() const;
 };
