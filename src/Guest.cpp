@@ -153,11 +153,11 @@ void Guest::signup() {
     // Implementation for signing up a new member account
     // This involves collecting user details and storing them
 
-    // Username and Password validation  ** Username not saved
+    // Username and Password validation  
     
     do{
         cout << "Enter username: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
+        // cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
         getline(cin, username);
         if (!isUsernameAvailable(username)){
             cout << "Username already taken. Please choose another." << endl;
@@ -244,10 +244,10 @@ void Guest::signup() {
 
     // ID Type and Number
     do{
-        cout << "Enter ID type (e.g., Passport, Driver's License): ";
+        cout << "Enter ID type (e.g., Passport, National ID): ";
         getline(cin, idType);
-        if(idType != "Passport" && idType != "Driver's License" && idType != "National ID") {
-            cout << "Invalid ID type. Please enter 'Passport', 'Driver's License', or 'National ID'." << endl;
+        if(idType != "Passport"  && idType != "National ID") {
+            cout << "Invalid ID type. Please enter 'Passport' or 'National ID'." << endl;
             idType.clear();
             continue;
         }
@@ -262,12 +262,32 @@ void Guest::signup() {
         if (!isIDNumberAvailable(idNumber)){
             cout << "ID number already registered. Please use another." << endl;
         } else {
+            if(idType == "National ID`" && idNumber.length() != 12) {
+                cout << "Invalid National ID number. It should be exactly 12 characters." << endl;
+                idNumber.clear();
+            }
+            else if(idType == "Passport"){
+                if (idNumber.length() != 8) {
+                    cout << "Invalid Passport number. It should be between 6 to 9 characters." << endl;
+                    idNumber.clear();
+                }
+                else if(idNumber.length() == 8 && (idNumber[0] < 'A' || idNumber[0] > 'Z')) {
+                    cout << "Invalid Passport number. It should start with a capital letter." << endl;
+                    idNumber.clear();
+                }
+                else{
+                    idNumber = idNumber;
+                }
+            } 
+            else{
+                idNumber = idNumber;
+            }
             idNumber = idNumber;
         }
     }while(idNumber.empty());
 
     // License Number and Expiry Date
-    cout << "Note: A valid driving license is required to list a motorbike." << endl;
+    cout << "/n/nNote: A valid driving license is required to list a motorbike." << endl;
     cout << "Do you have a valid driving license? (yes/no): ";
     string hasLicense;
     getline(cin, hasLicense);
@@ -303,8 +323,6 @@ void Guest::signup() {
     cout << "Sign up successful! You can now log in with your new member account." << endl;
     pause();
 
-    
-
 }
 
 void Guest::saveToFile(){
@@ -328,15 +346,120 @@ void Guest::viewListing() {
         cout << "Error opening motorbike listings file." << endl;
         return;
     }
+    string line;
+    getline(file, line); // Skip header line
+    // Display header
+    cout << left << setw(10) << "ID" 
+         << setw(15) << "Owner" 
+         << setw(20) << "Model" 
+         << setw(20) << "Plate Number"
+         << setw(10) << "CC" 
+         << setw(10) << "Price/Day" 
+         << setw(20) << "Status" 
+         
+         << endl;
+    cout << string(75, '-') << endl;
+    int renterRating = 3; // Default rating for guest
+
+    while(getline(file, line)) {  // Read each motorbike listing
+        stringstream ss(line);
+        string id, owner, brand,model,color,engineSize_cc,year,plateNumber,startDate,endDate,priceDailyCP,status,renterRatingMin;
+        getline(ss, id, ',');
+        getline(ss, owner, ',');
+        getline(ss, brand, ',');
+        getline(ss, model, ',');
+        getline(ss, color, ',');
+        getline(ss, engineSize_cc, ',');
+        getline(ss, year, ',');
+        getline(ss, plateNumber, ',');
+        getline(ss, startDate, ',');
+        getline(ss, endDate, ',');
+        getline(ss, priceDailyCP, ',');
+        getline(ss, status, ',');
+        getline(ss, renterRatingMin, ',');
+        
+        // Find owner's minimum renter rating from Member.csv
+        ifstream memberFile("Member.csv");
+        string memberLine;
+        getline(memberFile, memberLine); // Skip header line
+        renterRating = 3; // Default rating if not found
+        while(getline(memberFile, memberLine)) {
+            stringstream memberSS(memberLine);
+            string memUsername, memPassword, memFullName, memPhoneNumber, memEmail, memIdType, memIdNumber, memLicenseNumber, memLicenseExpiryDate;
+            int memCreditPoints, memRating;
+            getline(memberSS, memUsername, ',');
+            getline(memberSS, memPassword, ',');
+            getline(memberSS, memFullName, ',');
+            getline(memberSS, memPhoneNumber, ',');
+            getline(memberSS, memEmail, ',');
+            getline(memberSS, memIdType, ',');
+            getline(memberSS, memIdNumber, ',');
+            getline(memberSS, memLicenseNumber, ',');
+            getline(memberSS, memLicenseExpiryDate, ',');
+            string creditPointsStr;
+            getline(memberSS, creditPointsStr, ',');
+            memCreditPoints = stoi(creditPointsStr);
+            string ratingStr;
+            getline(memberSS, ratingStr);
+            memRating = stoi(ratingStr);
+            
+            if(memUsername == owner) {
+                renterRating = memRating;
+                break;
+            }
+        }
+        memberFile.close();
+        
+        // Only display motorbikes that are listed (status = "1")
+        if(status == "1") {
+            cout << left << setw(10) << id 
+                 << setw(15) << owner 
+                 << setw(20) << model 
+                 << setw(20) << plateNumber
+                 << setw(10) << engineSize_cc    
+                 << setw(10) << priceDailyCP
+                 << setw(20) << "Available" 
+                 << endl;
+            cout << "Minimum Renter Rating Required: " << renterRatingMin << endl;
+            cout << "";
+    
 
 
+
+        }
+    }
+    file.close();
+    pause();
 }
 
 // Testing Ground
-int main() {
+int main(){
     Guest guest;
-    guest.signup(); // Username
-    //guest.viewListing();
+    cout << "Welcome, Guest!" << endl;
+    cout << "1. Sign Up for a new member account" << endl;
+    cout << "2. View available motorbikes for rent" << endl;
+    cout << "3. Exit" << endl;
+    cout << "Please select an option (1-3): ";
+    int choice;
+    cin >> choice;
+    
+    if(choice < 1 || choice > 3) {
+        cout << "Invalid choice. Exiting." << endl;
+        return 0;
+    }
+    else if(choice == 3) {
+        cout << "Exiting. Goodbye!" << endl;
+        return 0;
+    }
+    else if(choice == 1) {
+            guest.signup(); // Clear
+    }
+    else if(choice == 2) {
+        guest.viewListing();
+    }
+
+
+    
     return 0;
 }
 
