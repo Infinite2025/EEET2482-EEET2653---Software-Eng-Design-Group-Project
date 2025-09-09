@@ -4,91 +4,52 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 class EBike {
-private:
+public:
     // Thông tin xe
-    string brand;
-    string model;
-    string color;
-    int    engineSize_cc;   // dung tích xi-lanh
-    int    year;
-    string plateNumber;
+    std::string brand;
+    std::string model;
+    std::string color;
+    int engineSize; // dung tích xi-lanh (changed from engineSize_cc to match Main.cpp)
+    int year;
+    std::string plateNumber;
 
-    // Thông tin niêm yết (listing)
-    string startDate;       // dd/mm/yyyy
-    string endDate;         // dd/mm/yyyy
-    int    dailyCP;         // giá/ngày (Credit Points)
-    int    minRenterRating; // điểm tối thiểu người thuê
-    bool   listed;          // đang mở cho thuê?
+    // Thông tin niêm yết (listing) (định dạng ISO: YYYY-MM-DD)
+    std::string startDate; // YYYY-MM-DD
+    std::string endDate;   // YYYY-MM-DD
+    int dailyCP; // giá/ngày (Credit Points)
+    int minRenterRating; // điểm tối thiểu người thuê
+    bool listed; // đang mở cho thuê?
 
     // Đánh giá
-    int    ratingSum;       // tổng điểm đã nhận
-    int    ratingCount;     // số lượt đánh giá
+    int ratingSum; // tổng điểm đã nhận
+    int ratingCount; // số lượt đánh giá
 
-    //HÀM PHỤ TRỢ (cơ bản) 
-    static void splitDate(const string& d, int& day, int& mon, int& year);
-    static bool dateLE(const string& a, const string& b); // a <= b ?
-    static int  daysInclusive(const string& a, const string& b); // số ngày (cả 2 đầu)
+    // Constructor
+    EBike();
+    EBike(const std::string& brand, const std::string& model, const std::string& color,
+          int engineSize, int year, const std::string& plateNumber);
 
-public:
-    //Constructor 
-    EBike(); // mặc định
-    EBike(const string& brand,
-          const string& model,
-          const string& color,
-          int engineSize_cc,
-          int year,
-          const string& plateNumber);
+    // HÀM PHỤ TRỢ (cơ bản)
+    static void splitDate(const std::string& d, int& year, int& mon, int& day);
+    static bool dateLE(const std::string& a, const std::string& b); // a <= b ?
+    static int daysInclusive(const std::string& a, const std::string& b); // số ngày (cả 2 đầu)
 
-    // Getter cơ bản
-    string getBrand()        const;
-    string getModel()        const;
-    string getColor()        const;
-    int    getEngineSizeCC() const;
-    int    getYear()         const;
-    string getPlateNumber()  const;
-
-    string getStartDate()       const;
-    string getEndDate()         const;
-    int    getDailyCP()         const;
-    int    getMinRenterRating() const;
-    bool   isListed()           const;
-    double getAverageRating()   const; // trung bình đơn giản
-
-    //Setter đơn giản
-    void setColor(const string& c);
-    void setEngineSizeCC(int cc);
-    void setYear(int y);
-
-    //Chức năng chính 
-    // Tạo/ cập nhật thông tin niêm yết
-    bool Listing(const string& start,
-                 const string& end,
-                 int dailyRate,
-                 int minRate,
-                 bool available);
-
-    // Hủy niêm yết
+    // Chức năng chính
+    bool Listing(const std::string& start, const std::string& end,
+                 int dailyRate, int minRate, bool available);
     bool Unlist();
-
-    // Kiểm tra còn thuê được trọn khoảng [s, e] không
-    bool isAvailableFor(const string& s, const string& e) const;
-
-    // Ước tính chi phí (CP) nếu thuê được
-    int estimateCost(const string& s, const string& e) const;
-
-    // Thêm một đánh giá (1..5)
+    bool isAvailableFor(const std::string& s, const std::string& e) const;
+    int estimateCost(const std::string& s, const std::string& e) const;
     bool addRating(int score);
-
-    //Lưu/đọc CSV (đơn giản) 
-    string toCSV() const;                          // thành một dòng CSV
-    static EBike fromCSV(const string& line);      // tạo đối tượng từ 1 dòng CSV
-    static bool saveAll(const vector<EBike>& v, const string& path);
-    static vector<EBike> loadAll(const string& path);
-
-    // In gọn thông tin xe (cho debug/demo)
+    double getAverageRating() const;
+    
+    // CSV operations
+    std::string toCSV() const;
+    static EBike fromCSV(const std::string& line);
+    static bool saveAll(const std::vector<EBike>& v, const std::string& path);
+    static std::vector<EBike> loadAll(const std::string& path);
+    
     void print() const;
 };
 

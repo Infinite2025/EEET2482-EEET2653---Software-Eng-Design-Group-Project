@@ -1,2 +1,2 @@
-username,password,fullName,email,phoneNumber,idType,idNumber,licenseNumber,licenseExpiryDate,creditPoints,rating 
-user001,Pasw21*,Trinh Tuan Kiet,abc@gmail.com,0123456789,Passport,A12345678,B1234567,2025-12-31,100,5
+username,password,email,license,creditPoints,phone,idNumber,rating
+nguyen,Nguyen123,test@member.com,L12345,20,0912345678,ID123,3

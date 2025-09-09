@@ -1,278 +1,212 @@
-#include<iostream>
-#include<string>
-#include<iomanip>
-#include<fstream>
-#include<sstream>
-#include<limits>
-#include "Guest.h"
+#include "../include/Guest.h"
+#include "EBike.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <cctype>
+#include <vector>
+
 using namespace std;
 
-// Default constructor for Guest class
-Guest::Guest() {
-    int creditPoints = 20; // Initialize credit points for guest
-    int rating = 3; // Initialize rating for guest
+static string trim(const string& s) {
+    size_t b = s.find_first_not_of(" \t\n\r");
+    if (b == string::npos) return string();
+    size_t e = s.find_last_not_of(" \t\n\r");
+    return s.substr(b, e - b + 1);
 }
 
-// Pauses the program until the user presses Enter
-void pause(){
-    cout << "Press Enter to continue...";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
+Guest::Guest() : creditPoints(20), rating(3), licenseExpiry(0) {}
 
-// Check availablility during sign up
 bool Guest::isUsernameAvailable(const string& username) {
-    // This function checks a list of existing usernames Member.txt
-    ifstream file("Member.csv");
+    ifstream file("member.csv");
+    if (!file.is_open()) return true; // if file missing, username is available
     string line;
-    getline(file, line); // Skip header line
-    while(getline(file, line)) {
+    getline(file, line); // skip header if present
+    while (getline(file, line)) {
         stringstream ss(line);
-        string existingUsername;
-        getline(ss, existingUsername, ','); // Assuming username is the first field
-            if(existingUsername == username) {
-                return false; // Username already exists
-            }
+        string uname;
+        if (!getline(ss, uname, ',')) continue;
+        if (trim(uname) == username) return false;
     }
-    return true;// Username is available
+    return true;
 }
 
 bool Guest::isEmailAvailable(const string& email) {
-    // This function checks a list of existing emails in Member.txt
-    ifstream file("Member.csv");
-    string line;
-    getline(file, line); // Skip header line
-    while(getline(file, line)) {
+    ifstream file("member.csv");
+    if (!file.is_open()) return true;
+    string line; getline(file, line);
+    while (getline(file, line)) {
         stringstream ss(line);
-        string existingEmail;
-        for(int i = 0; i < 4; i++) { // Assuming email is the 5th field
-            getline(ss, existingEmail, ',');
-        }
-        if(existingEmail == email) {
-            return false; // Email already exists
-        }
+        string uname, pwd, mail;
+        getline(ss, uname, ',');
+        getline(ss, pwd, ',');
+        getline(ss, mail, ',');
+        if (trim(mail) == email) return false;
     }
-    return true; // Email is available
+    return true;
 }
 
-// Validates if the password meets the minimum length requirement
+bool Guest::isPhoneNumberAvailable(const string& phone) {
+    ifstream file("member.csv");
+    if (!file.is_open()) return true;
+    string line; getline(file, line);
+    while (getline(file, line)) {
+        stringstream ss(line);
+        vector<string> cols;
+        string token;
+        while (getline(ss, token, ',')) cols.push_back(token);
+        if (cols.size()>5 && trim(cols[5])==phone) return false;
+    }
+    return true;
+}
+
+bool Guest::isIDNumberAvailable(const string& id) {
+    ifstream file("member.csv");
+    if (!file.is_open()) return true;
+    string line; getline(file, line);
+    while (getline(file, line)) {
+        stringstream ss(line);
+        vector<string> cols; string token;
+        while (getline(ss, token, ',')) cols.push_back(token);
+        if (cols.size()>6 && trim(cols[6])==id) return false;
+    }
+    return true;
+}
+
 bool Guest::isPasswordValid(const string& password) {
-    if (password.length() < 8) {
-        return false; // Password too short
+    bool hasUpper = false, hasLower = false, hasDigit = false;
+    if (password.size() < 8) return false;
+    for (char c : password) {
+        if (isupper(static_cast<unsigned char>(c))) hasUpper = true;
+        if (islower(static_cast<unsigned char>(c))) hasLower = true;
+        if (isdigit(static_cast<unsigned char>(c))) hasDigit = true;
     }
-    if(password.find(' ') != string::npos) {
-        return false; // Password contains spaces
-    }
-    for(char c : password) {
-        if (c < 0x21 || c >= 0x7F) {
-            return false; // Password contains invalid characters
-        }
-        if(isupper(c)) {
-            if(isdigit(c) && islower(c)){
-                return true; // Password contains at least one uppercase,lowercase and digit
-            }
-        }
-        
-    return true; // Password is valid
-    }
+    return hasUpper && hasLower && hasDigit;
 }
 
 bool Guest::isLicenseNumberValid(const string& licenseNumber) {
-    if(licenseNumber.length() != 12) {
-        return false; // License number must be exactly 12 characters
-    }
-    else if(licenseNumber.find(' ') != string::npos) {
-        return false; // License number should not contain spaces
-    }
-    else{
-        for(char c : licenseNumber) {
-            if(!(isdigit(c))) {
-                return false; // License number should be numeric
-            }
-        }
-    }
-    return true; // License number is valid
+    if (licenseNumber.empty()) return true; // optional
+    // simple validation: alnum and length between 5 and 12
+    if (licenseNumber.size() < 5 || licenseNumber.size() > 12) return false;
+    for (char c : licenseNumber) if (!isalnum(static_cast<unsigned char>(c))) return false;
+    return true;
 }
 
-// Main Functions for Guest class
-
+void Guest::saveToFile() {
+    // Ensure header exists
+    ifstream fi("member.csv");
+    bool hasHeader = false;
+    if (fi.is_open()) {
+        string first;
+        if (getline(fi, first)) {
+            if (first.find("username") != string::npos) hasHeader = true;
+        }
+        fi.close();
+    }
+    ofstream fo("member.csv", ios::app);
+    if (!fo.is_open()) {
+        cout << "Failed to open member.csv for writing.\n";
+        return;
+    }
+    if (!hasHeader) {
+        fo << "username,password,email,license,creditPoints,phone,idNumber,rating\n";
+    }
+    fo << username << "," << password << "," << email << "," << licenseNumber << "," << creditPoints << "," << phoneNumber << "," << idNumber << "," << rating << "\n";
+    fo.close();
+}
 
 void Guest::signup() {
-    cout << "Signing up for a new member account..." << endl;
-    // Implementation for signing up a new member account
-    // This involves collecting user details and storing them
-
-    // Username and Password validation
-    string input;
-    do{
+    cout << "\n--- Guest: Sign up for a new member account ---\n";
+    while (true) {
         cout << "Enter username: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        getline(cin, input);
-        if(input.empty()){
-            cout << "Username cannot be empty. Please try again." << endl;
-        } else if (!isUsernameAvailable(input)){
-            cout << "Username already taken. Please choose another." << endl;
-        } else {
-            username = input;
-        }
-
-    }while(username.empty());
-
-    do{
-        cout << "Enter password: ";
-        getline(cin, password);
-    }while(!isPasswordValid(password));
-
-    // Full Name
-    do{
-        cout << "Enter full name: ";
-        getline(cin, fullName);
-        
-    }while(fullName.empty());
-
-    // Email
-    do{
-        cout << "Enter email: ";
-        getline(cin, email);
-        if(email.find('@') == string::npos || email.find('.') == string::npos) {
-            cout << "Invalid email format. Please try again." << endl;
-            email.clear();
-        }
-        else if(!isEmailAvailable(email)){
-            cout << "Email already registered. Please use another or login to the Email Account." << endl;
-            email.clear();
-        }
-        else{
-            email = email;
-        }
-    }while(email.empty());
-
-    // Phone Number
-    do{
-        cout << "Enter phone number: ";
-        getline(cin, phoneNumber);
-        if(phoneNumber.length() !=10) {
-            cout << "Invalid phone number. Please enter a valid number." << endl;
-            phoneNumber.clear();
-        }
-        else if(phoneNumber.length() ==10) {
-            for(char c : phoneNumber) {
-                if(!isdigit(c)) {
-                    cout << "Phone number should contain only digits. Please try again." << endl;
-                    phoneNumber.clear();
-                    break;
-                }
-                if(phoneNumber[0] != '0') {
-                    cout << "Phone number should start with 0. Please try again." << endl;
-                    phoneNumber.clear();
-                    break;
-                }
-                if(phoneNumber.find(' ') != string::npos) {
-                    cout << "Phone number should not contain spaces. Please try again." << endl;
-                    phoneNumber.clear();
-                    break;
-            }
-            
-        }
+        getline(cin, username);
+        username = trim(username);
+        if (username.empty()) { cout << "Username cannot be empty.\n"; continue; }
+        if (!isUsernameAvailable(username)) { cout << "Username already exists.\n"; continue; }
+        break;
     }
-        else if(!isPhoneNumberAvailable(phoneNumber)){
-            cout << "Phone number already registered. Please use another or login to the Phone Number Account." << endl;
-            phoneNumber.clear();
-        }
-        else{
-            phoneNumber = phoneNumber;
-        
-        }
-    }while(phoneNumber.empty());
-
-    // ID Type and Number
-    do{
-        cout << "Enter ID type (e.g., Passport, Driver's License): ";
-        getline(cin, idType);
-        if(idType != "Passport" && idType != "Driver's License" && idType != "National ID") {
-            cout << "Invalid ID type. Please enter 'Passport', 'Driver's License', or 'National ID'." << endl;
-            idType.clear();
-            continue;
-        }
-        else{
-            idType = idType;
-        }
-    }while(idType.empty());
-    
-    do{
-        cout << "Enter ID number: ";
-        getline(cin, idNumber);
-        if (!isIDNumberAvailable(idNumber)){
-            cout << "ID number already registered. Please use another." << endl;
-        } else {
-            idNumber = idNumber;
-        }
-    }while(idNumber.empty());
-
-    // License Number and Expiry Date
-    cout << "Note: A valid driving license is required to list a motorbike." << endl;
-    cout << "Do you have a valid driving license? (yes/no): ";
-    string hasLicense;
-    getline(cin, hasLicense);
-    if(hasLicense == "no") {
-        cout << "You can only rent motorbikes with 50cc." << endl;
-
+    while (true) {
+        cout << "Enter email: "; getline(cin, email); email = trim(email);
+        if (email.empty()) { cout << "Email cannot be empty.\n"; continue; }
+        if (!isEmailAvailable(email)) { cout << "Email already used.\n"; continue; }
+        break;
     }
-    else if(hasLicense == "yes"){
-        cout << "Proceeding with license details..." << endl;
-
-        pause();
-        do{
-            cout << "Enter license number: ";
-            getline(cin, licenseNumber);
-            if(licenseNumber.length() != 12) {
-                cout << "Invalid license number. Please enter a valid license number." << endl;
-                licenseNumber.clear();
-            }
-            else if(!isLicenseNumberValid(licenseNumber)){
-                cout << "License number not valid. Please enter a valid license number." << endl;
-                licenseNumber.clear();
-            }
-            else{
-                licenseNumber = licenseNumber;
-            }
-        }while(licenseNumber.empty());
-
-        cout << "Enter license expiry date (DD/MM/YYYY): ";
-        getline(cin, licenseExpiryDate);
+    while (true) {
+        cout << "Enter password: "; getline(cin, password); password = trim(password);
+        if (!isPasswordValid(password)) { cout << "Password must be >=8 chars and include upper, lower and digit.\n"; continue; }
+        break;
     }
-
+    cout << "Enter full name: "; getline(cin, fullName); fullName = trim(fullName);
+    while (true) {
+        cout << "Enter phone number: "; getline(cin, phoneNumber); phoneNumber = trim(phoneNumber);
+        bool ok = true; if (phoneNumber.size()<9 || phoneNumber.size()>11) ok=false; for (char c: phoneNumber) if (!isdigit(static_cast<unsigned char>(c))) ok=false;
+        if (!ok) { cout << "Invalid phone. Use digits only, length 9-11.\n"; continue; }
+        if (!isPhoneNumberAvailable(phoneNumber)) { cout << "Phone already used.\n"; continue; }
+        break;
+    }
+    while (true) {
+        cout << "ID type [1] CCCD [2] Passport: "; string t; getline(cin, t); t = trim(t);
+        if (t=="1") { idType = "CCCD"; break; } else if (t=="2") { idType = "Passport"; break; } else cout << "Invalid choice.\n";
+    }
+    while (true) {
+        cout << "Enter ID number: "; getline(cin, idNumber); idNumber = trim(idNumber);
+        if (idNumber.empty()) { cout << "ID cannot be empty.\n"; continue; }
+        if (!isIDNumberAvailable(idNumber)) { cout << "ID already used.\n"; continue; }
+        // basic checks
+        bool ok = true;
+        if (idType=="CCCD") { if (idNumber.size()!=12) ok=false; for (char c: idNumber) if (!isdigit(static_cast<unsigned char>(c))) ok=false; }
+        else { if (idNumber.size()!=8) ok=false; }
+        if (!ok) { cout << "Invalid ID format for " << idType << ".\n"; continue; }
+        break;
+    }
+    cout << "Enter license number (optional): "; getline(cin, licenseNumber); licenseNumber = trim(licenseNumber);
+    if (!isLicenseNumberValid(licenseNumber)) { cout << "Invalid license number format. Keeping empty.\n"; licenseNumber.clear(); }
+    // license expiry: optional; skip on empty
+    while (true) {
+        cout << "Enter license expiry (YYYYMMDD) or leave empty: "; string s; getline(cin, s); s = trim(s);
+        if (s.empty()) { licenseExpiry = 0; break; }
+        bool digits = !s.empty() && all_of(s.begin(), s.end(), [](char c){ return isdigit(static_cast<unsigned char>(c)); });
+        if (!digits || s.size()!=8) { cout << "Invalid format. Use YYYYMMDD.\n"; continue; }
+        licenseExpiry = 0; for (char c: s) licenseExpiry = licenseExpiry*10 + (c - '0');
+        break;
+    }
+    // deposit leads to creditPoints
+    while (true) {
+        cout << "Enter initial deposit in USD (minimum 20): "; string s; getline(cin, s); s = trim(s);
+        if (s.empty()) { cout << "Please enter a number.\n"; continue; }
+        bool digits = all_of(s.begin(), s.end(), [](char c){ return isdigit(static_cast<unsigned char>(c)); });
+        if (!digits) { cout << "Invalid input. Use digits only.\n"; continue; }
+        int v = stoi(s);
+        if (v < 20) { cout << "Minimum deposit is $20.\n"; continue; }
+        creditPoints = v;
+        break;
+    }
+    // finalize
+    rating = 3;
     saveToFile();
-    cout << "Sign up successful! You can now log in with your new member account." << endl;
-    pause();
-
-    
-
-}
-
-void Guest::saveToFile(){
-    std::ofstream file("Member.csv", std::ios::app);
-    if(file.is_open()){
-        cout << "Saving member details to file..." << endl;
-        file << username << "," << password << "," << fullName << "," << phoneNumber << "," << email << "," << idType << "," << idNumber << "," << licenseNumber << "," << licenseExpiryDate << "," << creditPoints << "," << rating << endl;
-        file.close();
-    }
-    else{
-        cout << "Error opening file for writing." << endl;
-    }
+    cout << "Signup successful. You have " << creditPoints << " CP.\n";
 }
 
 void Guest::viewListing() {
-    cout << "Viewing available motorbikes for rent..." << endl;
-    // Implementation for viewing available motorbikes
-    
-    ifstream file("EBike.csv");
-    if(!file.is_open()) {
-        cout << "Error opening motorbike listings file." << endl;
-        return;
+    vector<EBike> bikes = EBike::loadAll("ebike.csv");
+    cout << "Available bikes:\n";
+    for (const auto& b : bikes) {
+        if (!b.listed) continue;
+        cout << "- " << b.brand << " " << b.model << " | " << b.engineSize << "cc | Plate: " << b.plateNumber << " | " << b.dailyCP << " CP/day | Rating: " << b.getAverageRating() << "\n";
     }
-
-
 }
 
+void Guest::viewLimitedBikes() {
+    vector<EBike> bikes = EBike::loadAll("ebike.csv");
+    cout << "First up to 3 bikes:\n";
+    int shown = 0;
+    for (const auto& b : bikes) {
+        if (!b.listed) continue;
+        cout << "- " << b.brand << " " << b.model << " | " << b.engineSize << "cc | Plate: " << b.plateNumber << " | " << b.dailyCP << " CP/day | Rating: " << b.getAverageRating() << "\n";
+        shown++;
+        if (shown >= 3) break;
+    }
+    if (shown == 0) cout << "No listed bikes available.\n";
+}
 
-
+string Guest::getUsername() const { return username; }
