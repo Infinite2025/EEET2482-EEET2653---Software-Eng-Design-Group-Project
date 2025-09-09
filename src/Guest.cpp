@@ -156,7 +156,7 @@ void Guest::signup() {
     // Username and Password validation  
     
     do{
-        cout << "Enter username: ";
+        cout << "Enter username: ";             // Enterusername duplicate issue
         // cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
         getline(cin, username);
         if (!isUsernameAvailable(username)){
